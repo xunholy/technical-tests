@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	fmt.Println("strarting http server ")
+	fmt.Println("starting http server ")
 	r := mux.NewRouter()
 	r.HandleFunc("/", helloworld)
 	r.HandleFunc("/go", goquote)
