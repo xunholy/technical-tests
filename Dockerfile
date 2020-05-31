@@ -1,16 +1,24 @@
-FROM golang:alpine
+## Stage 1
+FROM golang:alpine AS build
 
 ENV GO111MODULE=on
 
 WORKDIR /app
 
-ADD ./ /app
+RUN apk update && apk add --no-cache git
 
-RUN apk update --no-cache
+COPY . .
 
-RUN apk add git
+RUN go get -d -v && go mod verify
 
-RUN go build -o golang-test  .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o golang-test .
+
+## Stage 2
+FROM scratch
+
+WORKDIR /app
+
+COPY --from=build /app/golang-test .
 
 ENTRYPOINT ["/app/golang-test"]
 
